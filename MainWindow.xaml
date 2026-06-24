@@ -1,0 +1,502 @@
+﻿<Window x:Class="POE_Part3.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:POE_Part3"
+        Title="CyberBot — Cybersecurity Awareness Assistant"
+        Height="780" Width="980"
+        MinHeight="600" MinWidth="700"
+        WindowStartupLocation="CenterScreen"
+        Background="#0A0E1A"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip">
+
+    <Window.Resources>
+
+        <!-- ── Slim ScrollViewer style (was missing — caused compile error) ─────── -->
+        <Style x:Key="SlimScrollViewer" TargetType="ScrollViewer">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollViewer">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ScrollContentPresenter Grid.Column="0"/>
+                            <ScrollBar x:Name="PART_VerticalScrollBar"
+                                       Grid.Column="1"
+                                       Orientation="Vertical"
+                                       Value="{TemplateBinding VerticalOffset}"
+                                       Maximum="{TemplateBinding ScrollableHeight}"
+                                       ViewportSize="{TemplateBinding ViewportHeight}"
+                                       Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                       Width="6"
+                                       Opacity="0.4">
+                                <ScrollBar.Resources>
+                                    <!-- Slim thumb -->
+                                    <Style TargetType="Thumb">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Thumb">
+                                                    <Border Background="#00D4FF"
+                                                            CornerRadius="3"
+                                                            Margin="1"/>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                    <!-- Hide scroll buttons -->
+                                    <Style TargetType="RepeatButton">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </Style>
+                                </ScrollBar.Resources>
+                            </ScrollBar>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ── Send button ──────────────────────────────────────────────────────── -->
+        <Style x:Key="SendButton" TargetType="Button">
+            <Setter Property="Background"      Value="#00D4FF"/>
+            <Setter Property="Foreground"      Value="#0A0E1A"/>
+            <Setter Property="FontFamily"      Value="Consolas"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontWeight"      Value="Bold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"         Value="20,0"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#00FFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#1E3A5F"/>
+                                <Setter Property="Foreground" Value="#4A6A8A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ── Topic chip button ────────────────────────────────────────────────── -->
+        <Style x:Key="ChipButton" TargetType="Button">
+            <Setter Property="Background"      Value="#141D35"/>
+            <Setter Property="Foreground"      Value="#00D4FF"/>
+            <Setter Property="FontFamily"      Value="Consolas"/>
+            <Setter Property="FontSize"        Value="11"/>
+            <Setter Property="BorderBrush"     Value="#1E3A5F"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding"         Value="10,4"/>
+            <Setter Property="Margin"          Value="3,2"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="12"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background"  Value="#1E3A5F"/>
+                                <Setter Property="BorderBrush" Value="#00D4FF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ── Window control buttons (min / close) ─────────────────────────────── -->
+        <Style x:Key="WinBtn" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="Foreground"      Value="#8BA3C7"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width"           Value="36"/>
+            <Setter Property="Height"          Value="36"/>
+            <Setter Property="FontFamily"      Value="Consolas"/>
+            <Setter Property="FontSize"        Value="14"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#1E3A5F"/>
+                                <Setter Property="Foreground" Value="#00D4FF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ── Input TextBox ────────────────────────────────────────────────────── -->
+        <Style x:Key="InputBox" TargetType="TextBox">
+            <Setter Property="Background"      Value="#141D35"/>
+            <Setter Property="Foreground"      Value="#E8F4FD"/>
+            <Setter Property="CaretBrush"      Value="#00D4FF"/>
+            <Setter Property="FontFamily"      Value="Consolas"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="BorderBrush"     Value="#1E3A5F"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding"         Value="12,10"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Padding="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#00D4FF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ── Message bubble DataTemplate ─────────────────────────────────────── -->
+        <DataTemplate x:Key="MessageTemplate" DataType="{x:Type local:ChatMessage}">
+            <Grid Margin="8,4">
+                <Border HorizontalAlignment="{Binding Alignment}"
+                        Background="{Binding Background}"
+                        BorderBrush="#1E3A5F"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="14,10"
+                        MaxWidth="680">
+                    <StackPanel>
+                        <!-- Header: prefix + timestamp -->
+                        <DockPanel Margin="0,0,0,5">
+                            <TextBlock Text="{Binding Prefix}"
+                                       Foreground="{Binding Foreground}"
+                                       FontFamily="Consolas"
+                                       FontSize="10"
+                                       FontWeight="Bold"
+                                       Opacity="0.75"
+                                       DockPanel.Dock="Left"/>
+                            <TextBlock Text="{Binding TimeString}"
+                                       Foreground="#4A6A8A"
+                                       FontFamily="Consolas"
+                                       FontSize="9"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Center"/>
+                        </DockPanel>
+                        <!-- Message body -->
+                        <TextBlock Text="{Binding Text}"
+                                   Foreground="{Binding Foreground}"
+                                   FontFamily="Consolas"
+                                   FontSize="12"
+                                   TextWrapping="Wrap"
+                                   LineHeight="20"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
+    </Window.Resources>
+
+    <!-- Fade-in on load -->
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                     From="0" To="1" Duration="0:0:0.5"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <!-- Root border with outer glow -->
+    <Border BorderBrush="#1E3A5F" BorderThickness="1" CornerRadius="10"
+            Background="#0A0E1A">
+        <Border.Effect>
+            <DropShadowEffect Color="#00D4FF" BlurRadius="20" ShadowDepth="0" Opacity="0.3"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Title bar     -->
+                <RowDefinition Height="Auto"/>
+                <!-- ASCII header  -->
+                <RowDefinition Height="Auto"/>
+                <!-- Status bar    -->
+                <RowDefinition Height="Auto"/>
+                <!-- Topic chips   -->
+                <RowDefinition Height="*"/>
+                <!-- Chat area     -->
+                <RowDefinition Height="Auto"/>
+                <!-- Input row     -->
+                <RowDefinition Height="Auto"/>
+                <!-- Footer        -->
+            </Grid.RowDefinitions>
+
+            <!-- ══ TITLE BAR ══════════════════════════════════════════════════════ -->
+            <Border Grid.Row="0"
+                    Background="#0F1628"
+                    CornerRadius="10,10,0,0"
+                    MouseDown="TitleBar_MouseDown"
+                    Padding="14,0">
+                <DockPanel Height="40">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="🔒" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="CYBERBOT"
+                                   FontFamily="Consolas" FontSize="13" FontWeight="Bold"
+                                   Foreground="#00D4FF" VerticalAlignment="Center"/>
+                        <TextBlock Text=" // Cybersecurity Awareness Assistant"
+                                   FontFamily="Consolas" FontSize="11"
+                                   Foreground="#4A6A8A" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"
+                                DockPanel.Dock="Right"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center">
+                        <Button Style="{StaticResource WinBtn}" Content="─"
+                                Click="MinimiseButton_Click" ToolTip="Minimise"/>
+                        <Button Style="{StaticResource WinBtn}" Content="✕"
+                                Click="CloseButton_Click"    ToolTip="Close">
+                            <Button.Triggers>
+                                <EventTrigger RoutedEvent="Button.MouseEnter">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation
+                                                Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
+                                                To="#FF4757" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Button.Triggers>
+                        </Button>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <!-- ══ ASCII ART HEADER ════════════════════════════════════════════════ -->
+            <Border Grid.Row="1" Background="#0F1628" Padding="20,10">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#00D4FF" Offset="0"/>
+                        <GradientStop Color="#00FF9C" Offset="0.5"/>
+                        <GradientStop Color="#00D4FF" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+                <Border.BorderThickness>0,0,0,1</Border.BorderThickness>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- ASCII logo -->
+                    <TextBlock Grid.Column="0"
+                               xml:space="preserve"
+                               FontFamily="Consolas"
+                               FontSize="9.5"
+                               Foreground="#00D4FF"
+                               TextWrapping="NoWrap"
+                               VerticalAlignment="Center"><Run FontFamily="Consolas" xml:space="preserve">   ██████╗██╗   ██╗██████╗ ███████╗██████╗ ██████╗  ██████╗ ████████╗
+  ██╔════╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔═══██╗╚══██╔══╝
+  ██║      ╚████╔╝ ██████╔╝█████╗  ██████╔╝██████╔╝██║   ██║   ██║
+  ██║       ╚██╔╝  ██╔══██╗██╔══╝  ██╔══██╗██╔══██╗██║   ██║   ██║
+  ╚██████╗   ██║   ██████╔╝███████╗██║  ██║██████╔╝╚██████╔╝   ██║
+   ╚═════╝   ╚═╝   ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═════╝  ╚═════╝    ╚═╝</Run></TextBlock>
+
+                    <!-- Right branding -->
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center"
+                                HorizontalAlignment="Right" Margin="20,0,0,0">
+                        <TextBlock Text="THINK BEFORE"
+                                   FontFamily="Consolas" FontSize="10" FontWeight="Bold"
+                                   Foreground="#FF4757" HorizontalAlignment="Right"/>
+                        <TextBlock Text="YOU CLICK"
+                                   FontFamily="Consolas" FontSize="10" FontWeight="Bold"
+                                   Foreground="#FF4757" HorizontalAlignment="Right"/>
+                        <TextBlock Text="━━━━━━━━━━━━"
+                                   FontFamily="Consolas" FontSize="9"
+                                   Foreground="#1E3A5F" HorizontalAlignment="Right" Margin="0,3"/>
+                        <TextBlock Text="v3.0 — Combined"
+                                   FontFamily="Consolas" FontSize="9"
+                                   Foreground="#4A6A8A" HorizontalAlignment="Right"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ══ STATUS / SENTIMENT BAR ══════════════════════════════════════════ -->
+            <Border Grid.Row="2" Background="#0F1628" Padding="16,5">
+                <DockPanel>
+                    <!-- Live status -->
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
+                        <Ellipse Width="7" Height="7" Margin="0,0,6,0" VerticalAlignment="Center">
+                            <Ellipse.Fill>
+                                <SolidColorBrush Color="#00FF9C"/>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <TextBlock Text="{Binding StatusText}"
+                                   FontFamily="Consolas" FontSize="11"
+                                   Foreground="#8BA3C7" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Typing indicator -->
+                    <TextBlock Text="● ● ●"
+                               FontFamily="Consolas" FontSize="10"
+                               Foreground="#00D4FF"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Opacity="0.7" DockPanel.Dock="Right"
+                               Visibility="{Binding IsTyping,
+                                   Converter={x:Static local:BoolToVisibilityConverter.Instance}}"/>
+
+                    <!-- Sentiment badge -->
+                    <Border HorizontalAlignment="Right"
+                            Background="#141D35" BorderBrush="#1E3A5F" BorderThickness="1"
+                            CornerRadius="10" Padding="10,3" Margin="0,0,10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Mood: "
+                                       FontFamily="Consolas" FontSize="10"
+                                       Foreground="#4A6A8A" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding SentimentLabel}"
+                                       FontFamily="Consolas" FontSize="10"
+                                       Foreground="#00D4FF" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </DockPanel>
+            </Border>
+
+            <!-- ══ QUICK TOPIC CHIPS ════════════════════════════════════════════════ -->
+            <Border Grid.Row="3" Background="#0A0E1A" Padding="12,6">
+                <WrapPanel>
+                    <Button Style="{StaticResource ChipButton}" Content="🔑 password"   Click="Chip_Click"/>
+                    <Button Style="{StaticResource ChipButton}" Content="🎣 phishing"   Click="Chip_Click"/>
+                    <Button Style="{StaticResource ChipButton}" Content="🌐 browsing"   Click="Chip_Click"/>
+                    <Button Style="{StaticResource ChipButton}" Content="🦠 malware"    Click="Chip_Click"/>
+                    <Button Style="{StaticResource ChipButton}" Content="🔐 2fa"        Click="Chip_Click"/>
+                    <Button Style="{StaticResource ChipButton}" Content="🕵️ privacy"   Click="Chip_Click"/>
+                    <Button Style="{StaticResource ChipButton}" Content="🛡️ vpn"       Click="Chip_Click"/>
+                    <Button Style="{StaticResource ChipButton}" Content="💀 ransomware" Click="Chip_Click"/>
+                    <Button Style="{StaticResource ChipButton}" Content="🎭 social"     Click="Chip_Click"/>
+                    <Button Style="{StaticResource ChipButton}" Content="💾 backup"     Click="Chip_Click"/>
+                    <Button Style="{StaticResource ChipButton}" Content="📋 help"       Click="Chip_Click"/>
+                </WrapPanel>
+            </Border>
+
+            <!-- ══ CHAT MESSAGES ════════════════════════════════════════════════════ -->
+            <ScrollViewer Grid.Row="4"
+                          x:Name="ChatScrollViewer"
+                          Style="{StaticResource SlimScrollViewer}"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          Background="#0A0E1A"
+                          Padding="6,4">
+                <ItemsControl ItemsSource="{Binding Messages}"
+                              ItemTemplate="{StaticResource MessageTemplate}"
+                              VirtualizingPanel.IsVirtualizing="False">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <!-- ══ INPUT ROW ════════════════════════════════════════════════════════ -->
+            <Border Grid.Row="5" Background="#0F1628" Padding="14,10">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#00D4FF" Offset="0"/>
+                        <GradientStop Color="#1E3A5F" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+                <Border.BorderThickness>0,1,0,0</Border.BorderThickness>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Grid.Column="0"
+                             x:Name="InputTextBox"
+                             Style="{StaticResource InputBox}"
+                             Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
+                             KeyDown="InputTextBox_KeyDown"
+                             Height="40"
+                             VerticalContentAlignment="Center">
+                        <!-- Placeholder text via VisualBrush -->
+                        <TextBox.Resources>
+                            <Style TargetType="TextBox" BasedOn="{StaticResource InputBox}">
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <VisualBrush Stretch="None" AlignmentX="Left">
+                                                    <VisualBrush.Visual>
+                                                        <TextBlock Text="  Type a message or click a topic above..."
+                                                                   FontFamily="Consolas" FontSize="12"
+                                                                   Foreground="#2A4A6A"
+                                                                   VerticalAlignment="Center"
+                                                                   Padding="10,0"/>
+                                                    </VisualBrush.Visual>
+                                                </VisualBrush>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>
+
+                    <Button Grid.Column="2"
+                            Style="{StaticResource SendButton}"
+                            Content="SEND ▶"
+                            Height="40"
+                            Click="SendButton_Click"
+                            IsEnabled="{Binding CanSend}"/>
+                </Grid>
+            </Border>
+
+            <!-- ══ FOOTER ════════════════════════════════════════════════════════════ -->
+            <Border Grid.Row="6" Background="#0A0E1A" Padding="14,5" CornerRadius="0,0,10,10">
+                <DockPanel>
+                    <TextBlock Text="🔒 CyberBot v3.0  //  PROG POE Combined"
+                               FontFamily="Consolas" FontSize="9"
+                               Foreground="#2A4A6A" VerticalAlignment="Center"/>
+                    <TextBlock Text="Keyword Recognition + Sentiment Analysis + Memory"
+                               FontFamily="Consolas" FontSize="9"
+                               Foreground="#2A4A6A"
+                               HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                </DockPanel>
+            </Border>
+
+        </Grid>
+    </Border>
+</Window>
