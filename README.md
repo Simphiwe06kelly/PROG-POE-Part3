@@ -63,3 +63,67 @@ into a fully featured application with four advanced capabilities:
 - **Conversation flow** — handles "tell me more", "another tip", and topic continuity
 - **Audio greeting** on startup (greeting.wav)
 - **Delegate system** for bot responses
+
+## Project Structure
+POE Part3/
+
+│
+
+├── MainWindow.xaml          # WPF GUI layout — chat area, input, chips, status bar
+
+├── MainWindow.xaml.cs       # Code-behind — event handlers, auto-scroll, window controls
+
+│
+
+├── ChatViewModel.cs         # Main ViewModel — wires all services, handles message flow
+
+├── ChatMessage.cs           # Chat bubble model — visual properties from MessageType
+
+│
+
+├── ResponseEngine.cs        # Keyword matching, random tips, sentiment responses
+
+├── MemoryStore.cs           # User memory — name, interests, topic history
+
+├── SentimentAnalyser.cs     # Sentiment detection + delegate/enum definitions
+
+├── AudioPlayer.cs           # WAV greeting playback on background thread
+
+│
+
+├── TaskCommandHandler.cs    # NLP routing for task assistant commands
+
+├── TaskService.cs           # MySQL CRUD operations for CyberTask records
+
+├── CyberTask.cs             # Task model — Id, Title, Description, ReminderDate
+
+│
+
+├── QuizEngine.cs            # Quiz logic — questions, answer parsing, scoring
+
+├── QuizQuestion.cs          # Question model — text, options, correct index, explanation
+
+│
+
+└── ActivityLog.cs           # Timestamped action log, last 10 entries
+
+## How to Use
+
+| Command | What it does |
+|---|---|
+| `add task - <title>` | Add a new task |
+| `add task - <title> - <description>` | Add task with description |
+| `remind me to <title> due tomorrow` | Add task with reminder date |
+| `show tasks` | View pending tasks |
+| `all tasks` | View all tasks including completed |
+| `complete task <id>` | Mark a task as complete |
+| `delete task <id>` | Delete a task |
+| `due reminders` | View overdue reminders |
+| `start quiz` | Start the cybersecurity quiz |
+| `show activity log` | View recent bot actions |
+| `give me a tip` | Get a random security tip |
+| `phishing tip` | Get a phishing-specific tip |
+| `password tip` | Get a password-specific tip |
+| `what do you remember` | See what the bot knows about you |
+| `help` | View all available topics |
+| `exit` | Close the application |
