@@ -45,6 +45,20 @@ into a fully featured application with four advanced capabilities:
 - Recognises varied phrasings for all commands without requiring exact wording
 - Minimises "I didn't understand" responses
 
+## NLP Examples
+
+The chatbot understands varied phrasings — you don't need to use exact commands:
+
+| You say | Bot understands |
+|---|---|
+| `"Can you remind me to update my password?"` | Add task: update my password |
+| `"I need to enable 2FA due next week"` | Add task with reminder in 7 days |
+| `"What tasks do I have?"` | Show pending tasks |
+| `"I'm done with task 3"` | Complete task 3 |
+| `"What have you done for me?"` | Show activity log |
+| `"Quiz me on cybersecurity"` | Start the quiz |
+
+
 ### Activity Log
 - Records every significant action with a timestamp
 - Tracks: tasks added, completed, deleted; quiz started/completed; reminders set
